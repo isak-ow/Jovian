@@ -7,8 +7,8 @@ stats = ((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
 train_tfms = tt.Compose([tt.RandomCrop(32, padding=4, padding_mode='reflect'), 
                          tt.RandomHorizontalFlip(), 
                          tt.RandomRotation(30),
-                         tt.RandomResizedCrop(256, scale=(0.5,0.9), ratio=(1, 1)), 
-                         tt.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1),
+                         #tt.RandomResizedCrop(256, scale=(0.5,0.9), ratio=(1, 1)), 
+                         #tt.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1),
                          tt.ToTensor(), 
                          tt.Normalize(*stats,inplace=True)])
 valid_tfms = tt.Compose([tt.ToTensor(), tt.Normalize(*stats)])
