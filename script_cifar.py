@@ -7,7 +7,7 @@ import wandb
 import torch
 import torch.nn as nn
 
-epochs = 24
+epochs = 1
 wandb.init(
     # set the wandb project where this run will be logged
     project="cluster_CIFAR10_0809",
