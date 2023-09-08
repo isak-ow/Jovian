@@ -88,3 +88,7 @@ class ResNet9(nn.Module):
         out = self.res2(out) + out
         out = self.classifier(out)
         return out
+    
+def get_lr(optimizer):
+    for param_group in optimizer.param_groups:
+        return param_group['lr']

@@ -124,12 +124,13 @@ def test(epoch):
 scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr, epochs=epochs, 
                                                 steps_per_epoch=len(train_loader))
 
+torch.cuda.empty_cache() #removes any residual data from the gpus 
 for epoch in range(epochs):
     wandb.log({"epoch": epoch})
     train(epoch)
     test(epoch)
     scheduler.step()
-    wandb.log({"learning_rate": float(scheduler.get_lr)})
+    wandb.log({"learning_rate": f.get_lr(optimizer)})
 
 wandb.finish()
 #history += ff.fit(epochs, learning_rate, model, train_loader, val_loader)

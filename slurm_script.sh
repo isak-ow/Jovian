@@ -1,7 +1,7 @@
 #!/bin/bash 
 #SBATCH -N 1
 #SBATCH -n 1
-#SBATCH --job-name=script
+#SBATCH --job-name=CIFAR10
 #SBATCH --cpus-per-task 1
 #SBATCH --mail-type=All
 #SBATCH --mail-user=i.wangensteen@uq.net.au
