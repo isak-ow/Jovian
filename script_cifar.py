@@ -16,7 +16,7 @@ wandb.init(
     config={
     "architecture": "ResNet9",
     "dataset": "CIFAR-10",
-    "epochs": 8,
+    "epochs": 24,
     }
 )
 
@@ -82,8 +82,8 @@ def train(epoch):
         _, predicted = outputs.max(1)
         total += labels.size(0)
         correct += predicted.eq(labels).sum().item()
-        if not abs(train_loss) < 0.02:
-            wandb.log({"train_loss": train_loss})
+    
+    wandb.log({"train_loss": train_loss})
 
 def test(epoch):
     global best_acc
@@ -103,8 +103,7 @@ def test(epoch):
             _, predicted = outputs.max(1)
             total += labels.size(0)
             correct += predicted.eq(labels).sum().item()
-            if not abs(test_loss) < 0.02:
-                wandb.log({"test_loss": test_loss})
+                
 
         acc = 100.*correct/total
         wandb.log({"acc": acc})
@@ -120,7 +119,9 @@ def test(epoch):
         torch.save(state, './checkpoint/ckpt.pth')
         best_acc = acc
         wandb.log({"best_acc": best_acc})
+    
 
+    wandb.log({"test_loss": test_loss})
 #training loop
 scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr, epochs=epochs, 
                                                 steps_per_epoch=len(train_loader))
