@@ -9,6 +9,11 @@ import torch.nn as nn
 import pre_act_model as pre
 
 epochs = 24
+batch_size = 256
+weight_decay = 1e-4
+max_lr = 0.01
+grad_clip = 0.1 
+
 wandb.init(
     # set the wandb project where this run will be logged
     project="cluster_CIFAR10_0809",
@@ -42,7 +47,6 @@ print(classes)
 train_data = ImageFolder(data_dir+'/train', f.train_tfms)
 valid_data = ImageFolder(data_dir+'/test', f.valid_tfms)
 
-batch_size = 128
 train_dl = DataLoader(train_data, batch_size, shuffle=True, num_workers=1, pin_memory=True)
 test_dl = DataLoader(valid_data, batch_size*2, num_workers=1, pin_memory=True)
 
@@ -50,10 +54,6 @@ device = f.get_default_device()
 
 train_loader = f.DeviceDataLoader(train_dl,device)
 test_loader = f.DeviceDataLoader(test_dl,device)
-
-weight_decay = 1e-4
-max_lr = 0.01
-grad_clip = 0.1 
 
 model = f.to_device(f.cifar_10_model(color_channels, num_classes), device)
 print(model)
