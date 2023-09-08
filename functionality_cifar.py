@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import torchvision.transforms as tt
 
 stats = ((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+
 train_tfms = tt.Compose([tt.RandomCrop(32, padding=4, padding_mode='reflect'), 
                          tt.RandomHorizontalFlip(), 
                          tt.RandomRotation(30),
@@ -11,6 +12,7 @@ train_tfms = tt.Compose([tt.RandomCrop(32, padding=4, padding_mode='reflect'),
                          #tt.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1),
                          tt.ToTensor(), 
                          tt.Normalize(*stats,inplace=True)])
+
 valid_tfms = tt.Compose([tt.ToTensor(), tt.Normalize(*stats)])
 
 # class cifar_10_model(nn.Module):
@@ -83,15 +85,15 @@ class cifar_10_model(nn.Module):
             nn.Sequential(conv_block(512, 512), conv_block(512, 512))
         ])
 
-        # self.complex_res_blocks = nn.ModuleList([
-        #     nn.Sequential(ComplexResidualBlock(128, 128), ComplexResidualBlock(128, 128)),
-        #     nn.Sequential(ComplexResidualBlock(512, 512), ComplexResidualBlock(512, 512))
-        # ])
+        self.complex_res_blocks = nn.ModuleList([
+            nn.Sequential(ComplexResidualBlock(128, 128), ComplexResidualBlock(128, 128)),
+            nn.Sequential(ComplexResidualBlock(512, 512), ComplexResidualBlock(512, 512))
+        ])
 
-        # self.simple_res_blocks = nn.ModuleList([
-        #     nn.Sequential(SimpleResidualBlock(128, 128), SimpleResidualBlock(128, 128)),
-        #     nn.Sequential(SimpleResidualBlock(512, 512), SimpleResidualBlock(512, 512))
-        # ])
+        self.simple_res_blocks = nn.ModuleList([
+            nn.Sequential(SimpleResidualBlock(128, 128), SimpleResidualBlock(128, 128)),
+            nn.Sequential(SimpleResidualBlock(512, 512), SimpleResidualBlock(512, 512))
+        ])
         
         self.classifier = nn.Sequential(
             nn.MaxPool2d(4),
@@ -105,20 +107,20 @@ class cifar_10_model(nn.Module):
         for i, block in enumerate(self.blocks):
             out = block(out)
             if i == 1:  # After the second block
-                out = self.res_blocks[0](out) + out
+                out = self.complex_res_blocks[0](out) + out
             if i == 3:  # After the fourth block
-                out = self.res_blocks[1](out) + out
+                out = self.complex_res_blocks[1](out) + out
         out = self.classifier(out)
         return out
     
 class SimpleResidualBlock(nn.Module):
-    def __init__(self):
+    def __init__(self,in_channels,out_channels):
         super().__init__()
-        self.conv1 = nn.Conv2d(in_channels=3, out_channels=3, kernel_size=3, stride=1, padding=1)
-        self.bn1 = nn.BatchNorm2d(out_channels=3)
+        self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=3, stride=1, padding=1)
+        self.bn1 = nn.BatchNorm2d(out_channels=out_channels)
         self.relu1 = nn.ReLU()
-        self.conv2 = nn.Conv2d(in_channels=3, out_channels=3, kernel_size=3, stride=1, padding=1)
-        self.bn2 = nn.BatchNorm2d(out_channels=3)
+        self.conv2 = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=3, stride=1, padding=1)
+        self.bn2 = nn.BatchNorm2d(out_channels=out_channels)
         self.relu2 = nn.ReLU()
         
     def forward(self, x):
