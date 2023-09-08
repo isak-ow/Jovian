@@ -9,7 +9,7 @@ import torch.nn as nn
 
 wandb.init(project="cluster_CIFAR10_0809", name="better_logging_1")
 wandb.config.update({"architecture": "cifar10model", "dataset": "CIFAR-10", "epochs": 24, 
-                     "batch_size": 400, "weight_decay": 1e-4, "max_lr": 0.01, "grad_clip": 0.1})
+                     "batch_size": 400, "weight_decay": 1e-4, "max_lr": 0.01, "grad_clip": 1.5})
 
 from torchvision.datasets.utils import download_url
 dataset_url = "https://s3.amazonaws.com/fast-ai-imageclas/cifar10.tgz"
