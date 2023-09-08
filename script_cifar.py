@@ -52,7 +52,7 @@ test_loader = f.DeviceDataLoader(test_dl,device)
 weight_decay = 1e-4
 max_lr = 0.01
 grad_clip = 0.1
-epochs = 8
+epochs = 24
 
 model = f.to_device(f.ResNet9(color_channels, num_classes), device)
 print(model)
