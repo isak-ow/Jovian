@@ -16,7 +16,7 @@ wandb.init(
     
     # track hyperparameters and run metadata
     config={
-    "architecture": "pre_activation_model",
+    "architecture": "cifar10model",
     "dataset": "CIFAR-10",
     "epochs": epochs,
     }
@@ -55,7 +55,7 @@ weight_decay = 1e-4
 max_lr = 0.01
 grad_clip = 0.1 
 
-model = f.to_device(pre.pre_activation_model(color_channels, num_classes), device)
+model = f.to_device(f.cifar_10_model(color_channels, num_classes), device)
 print(model)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(),momentum=0.9, lr=max_lr, weight_decay=5e-4)

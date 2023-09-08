@@ -45,14 +45,18 @@ class SimpleResidualBlock(nn.Module):
     def __init__(self):
         super().__init__()
         self.conv1 = nn.Conv2d(in_channels=3, out_channels=3, kernel_size=3, stride=1, padding=1)
+        self.bn1 = nn.BatchNorm2d(out_channels=3)
         self.relu1 = nn.ReLU()
         self.conv2 = nn.Conv2d(in_channels=3, out_channels=3, kernel_size=3, stride=1, padding=1)
+        self.bn2 = nn.BatchNorm2d(out_channels=3)
         self.relu2 = nn.ReLU()
         
     def forward(self, x):
         out = self.conv1(x)
+        out = self.bn1(out)
         out = self.relu1(out)
         out = self.conv2(out)
+        out = self.bn2(out)
         return self.relu2(out) + x # ReLU can be applied before or after adding the input
     
 def conv_block(in_channels, out_channels, pool=False):
@@ -84,16 +88,25 @@ class cifar_10_model(nn.Module):
                                         nn.Linear(512, num_classes))
         
     def forward(self, xb):
+        #input [batch,3,32,32]
         out = self.conv1(xb)
+        #out [batch,64,32,32]
         out = self.conv2(out)
+        #out [batch,128,16,16]
         out = self.res1(out) + out
+        #out [batch,128,16,16]
         out = self.conv3(out)
+        #out [batch,256,16,16]
         out = self.conv4(out)
+        #out [batch,512,4,4]
         out = self.res2(out) + out
+        #out [batch,512,4,4]
         # out = self.conv5(out)
         # out = self.conv6(out)
         # out = self.res3(out) + out
+        print(out.shape)
         out = self.classifier(out)
+        print(out.shape)
         return out
     
 def get_lr(optimizer):
