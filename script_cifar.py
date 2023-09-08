@@ -6,30 +6,10 @@ from torchvision.datasets import ImageFolder
 import wandb
 import torch
 import torch.nn as nn
-import pre_act_model as pre
-
-# epochs = 24
-# batch_size = 400
-# weight_decay = 1e-4
-# max_lr = 0.01
-# grad_clip = 0.1 
 
 wandb.init(project="cluster_CIFAR10_0809", name="better_logging_1")
 wandb.config.update({"architecture": "cifar10model", "dataset": "CIFAR-10", "epochs": 24, 
-                     "batch_size": 256, "weight_decay": 1e-4, "max_lr": 0.01, "grad_clip": 0.1})
-
-# wandb.init(
-#     # set the wandb project where this run will be logged
-#     project="cluster_CIFAR10_0809",
-#     name = "better_logging_1",
-    
-#     # track hyperparameters and run metadata
-#     config={
-#     "architecture": "cifar10model",
-#     "dataset": "CIFAR-10",
-#     "epochs": epochs,
-#     }
-# )
+                     "batch_size": 400, "weight_decay": 1e-4, "max_lr": 0.01, "grad_clip": 0.1})
 
 from torchvision.datasets.utils import download_url
 dataset_url = "https://s3.amazonaws.com/fast-ai-imageclas/cifar10.tgz"
@@ -37,10 +17,6 @@ if not os.path.exists('./data/cifar10'):
     download_url(dataset_url, '.')
     with tarfile.open('./cifar10.tgz', 'r:gz') as tar:
         tar.extractall(path='./data')
-
-# Extract from archive
-# with tarfile.open('./cifar10.tgz', 'r:gz') as tar:
-#     tar.extractall(path='./data')
     
 # Look into the data directory
 data_dir = './data/cifar10'
@@ -54,8 +30,8 @@ print(classes)
 train_data = ImageFolder(data_dir+'/train', f.train_tfms)
 valid_data = ImageFolder(data_dir+'/test', f.valid_tfms)
 
-train_dl = DataLoader(train_data, wandb.config.batch_size, shuffle=True, num_workers=1, pin_memory=True)
-test_dl = DataLoader(valid_data, wandb.config.batch_size*2, num_workers=1, pin_memory=True)
+train_dl = DataLoader(train_data, wandb.config.batch_size, shuffle=True, num_workers=2, pin_memory=True)
+test_dl = DataLoader(valid_data, wandb.config.batch_size*2, num_workers=2, pin_memory=True)
 
 device = f.get_default_device()
 
