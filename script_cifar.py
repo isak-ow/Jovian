@@ -145,10 +145,9 @@ def test(epoch):
 
 # Training loop
 for epoch in range(wandb.config.epochs):
-    wandb.log({"epoch": epoch})
     train(epoch)
     test(epoch)
-    wandb.log({"learning_rate": f.get_lr(optimizer)})  # Assuming f.get_lr is defined
+    wandb.log({"epoch": epoch, "learning_rate": f.get_lr(optimizer)})  
 
 wandb.finish()
 torch.save(model, 'model.pth')
