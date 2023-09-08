@@ -55,7 +55,6 @@ max_lr = 0.01
 grad_clip = 0.1 
 
 model = f.to_device(f.cifar_10_model(color_channels, num_classes), device)
-torch.save(model,'model.pth')
 print(model)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(),momentum=0.9, lr=max_lr, weight_decay=5e-4)
@@ -72,7 +71,7 @@ def train(epoch):
         labels = labels.to(device)
 
         if grad_clip: 
-                nn.utils.clip_grad_value_(model.parameters(), grad_clip)
+            nn.utils.clip_grad_value_(model.parameters(), grad_clip)
         optimizer.zero_grad()
         outputs = model(images)
         loss = criterion(outputs,labels)
@@ -123,12 +122,13 @@ def test(epoch):
     
 
     wandb.log({"test_loss": test_loss})
-#training loop
+
 scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr, epochs=epochs, 
                                                 steps_per_epoch=len(train_loader))
 
 torch.cuda.empty_cache() #removes any residual data from the gpus
 
+#training loop
 for epoch in range(epochs):
     wandb.log({"epoch": epoch})
     train(epoch)
@@ -137,5 +137,5 @@ for epoch in range(epochs):
     wandb.log({"learning_rate": f.get_lr(optimizer)})
 
 wandb.finish()
-
+torch.save(model,'model.pth')
 
