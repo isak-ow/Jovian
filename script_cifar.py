@@ -5,6 +5,7 @@ import functionality_cifar as f
 from torchvision.datasets import ImageFolder
 import wandb
 import torch
+import torch.nn as nn
 
 wandb.init(
     # set the wandb project where this run will be logged
@@ -19,9 +20,9 @@ wandb.init(
     }
 )
 
-from torchvision.datasets.utils import download_url
-dataset_url = "https://s3.amazonaws.com/fast-ai-imageclas/cifar10.tgz"
-download_url(dataset_url, '.')
+# from torchvision.datasets.utils import download_url
+# dataset_url = "https://s3.amazonaws.com/fast-ai-imageclas/cifar10.tgz"
+# download_url(dataset_url, '.')
 
 # Extract from archive
 with tarfile.open('./cifar10.tgz', 'r:gz') as tar:
@@ -53,7 +54,7 @@ max_lr = 0.01
 grad_clip = 0.1
 epochs = 8
 
-model = f.to_device(f.ResNet9(color_channels, num_classes))
+model = f.to_device(f.ResNet9(color_channels, num_classes), device)
 print(model)
 criterion = f.F.cross_entropy()
 optimizer = f.torch.optim.Adam(model.parameters(), max_lr, weight_decay=weight_decay)
@@ -68,6 +69,8 @@ def train(epoch):
         images = images.to(device)
         labels = labels.to(device)
 
+        if grad_clip: 
+                nn.utils.clip_grad_value_(model.parameters(), grad_clip)
         optimizer.zero_grad()
         outputs = model(images)
         loss = criterion(outputs,labels)
