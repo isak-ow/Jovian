@@ -76,7 +76,7 @@ class PreActivationResidualBlock(nn.Module):
 
 class pre_activation_model(nn.Module):
     def __init__(self, num_classes=10, use_pre_activation_blocks=False):
-        super(YourMainModel, self).__init__()
+        super(pre_activation_model, self).__init__()
         ResidualBlock = PreActivationResidualBlock if use_pre_activation_blocks else SimpleResidualBlock
         
         # First Convolution
