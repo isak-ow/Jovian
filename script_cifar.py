@@ -57,7 +57,7 @@ epochs = 24
 model = f.to_device(f.ResNet9(color_channels, num_classes), device)
 print(model)
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.SGD(model.parameters(),momentum=0.9, lr=0.1, weight_decay=5e-4)
+optimizer = torch.optim.SGD(model.parameters(),momentum=0.9, lr=max_lr, weight_decay=5e-4)
 best_acc = 0
 
 def train(epoch):
@@ -136,5 +136,6 @@ for epoch in range(epochs):
     wandb.log({"learning_rate": f.get_lr(optimizer)})
 
 wandb.finish()
+torch.save(model,'./Jovian/model.pth')
 
 
