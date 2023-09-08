@@ -105,9 +105,9 @@ class cifar_10_model(nn.Module):
         for i, block in enumerate(self.blocks):
             out = block(out)
             if i == 1:  # After the second block
-                out = self.complex_res_blocks[0](out) + out
+                out = self.res_blocks[0](out) + out
             if i == 3:  # After the fourth block
-                out = self.complex_res_blocks[1](out) + out
+                out = self.res_blocks[1](out) + out
         out = self.classifier(out)
         return out
     
