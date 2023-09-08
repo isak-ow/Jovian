@@ -41,19 +41,19 @@ def to_device(data, device):
         return [to_device(x, device) for x in data]
     return data.to(device, non_blocking=True)
 
-# class SimpleResidualBlock(nn.Module):
-#     def __init__(self):
-#         super().__init__()
-#         self.conv1 = nn.Conv2d(in_channels=3, out_channels=3, kernel_size=3, stride=1, padding=1)
-#         self.relu1 = nn.ReLU()
-#         self.conv2 = nn.Conv2d(in_channels=3, out_channels=3, kernel_size=3, stride=1, padding=1)
-#         self.relu2 = nn.ReLU()
+class SimpleResidualBlock(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=3, kernel_size=3, stride=1, padding=1)
+        self.relu1 = nn.ReLU()
+        self.conv2 = nn.Conv2d(in_channels=3, out_channels=3, kernel_size=3, stride=1, padding=1)
+        self.relu2 = nn.ReLU()
         
-#     def forward(self, x):
-#         out = self.conv1(x)
-#         out = self.relu1(out)
-#         out = self.conv2(out)
-#         return self.relu2(out) + x # ReLU can be applied before or after adding the input
+    def forward(self, x):
+        out = self.conv1(x)
+        out = self.relu1(out)
+        out = self.conv2(out)
+        return self.relu2(out) + x # ReLU can be applied before or after adding the input
     
 def conv_block(in_channels, out_channels, pool=False):
     layers = [nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1), 
@@ -74,6 +74,10 @@ class cifar_10_model(nn.Module):
         self.conv4 = conv_block(256, 512, pool=True)
         self.res2 = nn.Sequential(conv_block(512, 512), conv_block(512, 512))
         
+        self.conv5 = conv_block(512, 512, pool=True)
+        self.conv6 = conv_block(512, 512, pool=True)
+        self.res3 = nn.Sequential(conv_block(512, 512), conv_block(512, 512))
+
         self.classifier = nn.Sequential(nn.MaxPool2d(4), 
                                         nn.Flatten(), 
                                         nn.Dropout(0.2),
@@ -86,6 +90,9 @@ class cifar_10_model(nn.Module):
         out = self.conv3(out)
         out = self.conv4(out)
         out = self.res2(out) + out
+        out = self.conv5(out)
+        out = self.conv6(out)
+        out = self.res3(out) + out
         out = self.classifier(out)
         return out
     
