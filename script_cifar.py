@@ -7,6 +7,7 @@ import wandb
 import torch
 import torch.nn as nn
 
+epochs = 1
 wandb.init(
     # set the wandb project where this run will be logged
     project="cluster_CIFAR10_0809",
@@ -16,7 +17,7 @@ wandb.init(
     config={
     "architecture": "ResNet9",
     "dataset": "CIFAR-10",
-    "epochs": 1,
+    "epochs": epochs,
     }
 )
 
@@ -51,8 +52,7 @@ test_loader = f.DeviceDataLoader(test_dl,device)
 
 weight_decay = 1e-4
 max_lr = 0.01
-grad_clip = 0.1
-epochs = 24
+grad_clip = 0.1 
 
 model = f.to_device(f.cifar_10_model(color_channels, num_classes), device)
 torch.save(model,'model.pth')
