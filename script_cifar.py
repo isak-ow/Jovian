@@ -16,7 +16,7 @@ wandb.init(
     config={
     "architecture": "ResNet9",
     "dataset": "CIFAR-10",
-    "epochs": 24,
+    "epochs": 1,
     }
 )
 
