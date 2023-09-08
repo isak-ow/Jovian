@@ -57,7 +57,7 @@ epochs = 8
 model = f.to_device(f.ResNet9(color_channels, num_classes), device)
 print(model)
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.1, weight_decay=5e-4)
+optimizer = torch.optim.SGD(model.parameters(),momentum=0.9, lr=0.1, weight_decay=5e-4)
 best_acc = 0
 
 def train(epoch):
@@ -126,7 +126,8 @@ def test(epoch):
 scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr, epochs=epochs, 
                                                 steps_per_epoch=len(train_loader))
 
-torch.cuda.empty_cache() #removes any residual data from the gpus 
+torch.cuda.empty_cache() #removes any residual data from the gpus
+
 for epoch in range(epochs):
     wandb.log({"epoch": epoch})
     train(epoch)
@@ -135,16 +136,5 @@ for epoch in range(epochs):
     wandb.log({"learning_rate": f.get_lr(optimizer)})
 
 wandb.finish()
-#history += ff.fit(epochs, learning_rate, model, train_loader, val_loader)
 
-# # image = train_data.data[np.random.randint(0,2000)]
-# # print(image.shape)
-# # print(train_data.classes)
-# # plt.imshow(image)
-# # plt.show()
-
-# batch_size = 128
-
-# train_dl = DataLoader(train_data, batch_size, shuffle=True, num_workers=4, pin_memory=True)
-# test_dl = DataLoader(test_data, batch_size*2, num_workers=4,pin_memory=True)
 
