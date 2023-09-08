@@ -19,13 +19,13 @@ class cifar_10_model(nn.Module):
     def __init__(self, in_channels, num_classes):
         super().__init__()
         
-        self.conv1 = ComplexResidualBlock(in_channels, 64)
-        self.conv2 = ComplexResidualBlock(64, 128, pool=True)
-        self.res1 = nn.Sequential(ComplexResidualBlock(128, 128), ComplexResidualBlock(128, 128))
+        self.conv1 = conv_block(in_channels, 64)
+        self.conv2 = conv_block(64, 128, pool=True)
+        self.res1 = nn.Sequential(conv_block(128, 128), conv_block(128, 128))
         
-        self.conv3 = ComplexResidualBlock(128, 256, pool=True)
-        self.conv4 = ComplexResidualBlock(256, 512, pool=True)
-        self.res2 = nn.Sequential(ComplexResidualBlock(512, 512), ComplexResidualBlock(512, 512))
+        self.conv3 = conv_block(128, 256, pool=True)
+        self.conv4 = conv_block(256, 512, pool=True)
+        self.res2 = nn.Sequential(conv_block(512, 512), conv_block(512, 512))
         
         # self.conv5 = conv_block(512, 512, pool=True)
         # self.conv6 = conv_block(512, 512, pool=True)
