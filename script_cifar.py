@@ -56,7 +56,7 @@ epochs = 8
 
 model = f.to_device(f.ResNet9(color_channels, num_classes), device)
 print(model)
-criterion = f.F.cross_entropy()
+criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.1,
                       momentum=0.9, weight_decay=5e-4)
 
