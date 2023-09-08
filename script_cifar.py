@@ -21,9 +21,9 @@ wandb.init(
     }
 )
 
-# from torchvision.datasets.utils import download_url
-# dataset_url = "https://s3.amazonaws.com/fast-ai-imageclas/cifar10.tgz"
-# download_url(dataset_url, '.')
+from torchvision.datasets.utils import download_url
+dataset_url = "https://s3.amazonaws.com/fast-ai-imageclas/cifar10.tgz"
+download_url(dataset_url, '.')
 
 # Extract from archive
 with tarfile.open('./cifar10.tgz', 'r:gz') as tar:
@@ -58,6 +58,8 @@ model = f.to_device(f.cifar_10_model(color_channels, num_classes), device)
 print(model)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(),momentum=0.9, lr=max_lr, weight_decay=5e-4)
+scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr, epochs=epochs, 
+                                                steps_per_epoch=len(train_loader))
 best_acc = 0
 
 def train(epoch):
@@ -72,11 +74,13 @@ def train(epoch):
 
         if grad_clip: 
             nn.utils.clip_grad_value_(model.parameters(), grad_clip)
-        optimizer.zero_grad()
+            
         outputs = model(images)
         loss = criterion(outputs,labels)
         loss.backward()
         optimizer.step()
+        optimizer.zero_grad()
+        scheduler.step()
 
         train_loss += loss.item()
         _, predicted = outputs.max(1)
@@ -123,9 +127,6 @@ def test(epoch):
 
     wandb.log({"test_loss": test_loss})
 
-scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr, epochs=epochs, 
-                                                steps_per_epoch=len(train_loader))
-
 torch.cuda.empty_cache() #removes any residual data from the gpus
 
 #training loop
@@ -133,7 +134,6 @@ for epoch in range(epochs):
     wandb.log({"epoch": epoch})
     train(epoch)
     test(epoch)
-    scheduler.step()
     wandb.log({"learning_rate": f.get_lr(optimizer)})
 
 wandb.finish()

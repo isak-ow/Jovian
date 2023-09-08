@@ -74,9 +74,9 @@ class cifar_10_model(nn.Module):
         self.conv4 = conv_block(256, 512, pool=True)
         self.res2 = nn.Sequential(conv_block(512, 512), conv_block(512, 512))
         
-        self.conv5 = conv_block(512, 512, pool=True)
-        self.conv6 = conv_block(512, 512, pool=True)
-        self.res3 = nn.Sequential(conv_block(512, 512), conv_block(512, 512))
+        # self.conv5 = conv_block(512, 512, pool=True)
+        # self.conv6 = conv_block(512, 512, pool=True)
+        # self.res3 = nn.Sequential(conv_block(512, 512), conv_block(512, 512))
 
         self.classifier = nn.Sequential(nn.MaxPool2d(4), 
                                         nn.Flatten(), 
@@ -90,9 +90,9 @@ class cifar_10_model(nn.Module):
         out = self.conv3(out)
         out = self.conv4(out)
         out = self.res2(out) + out
-        out = self.conv5(out)
-        out = self.conv6(out)
-        out = self.res3(out) + out
+        # out = self.conv5(out)
+        # out = self.conv6(out)
+        # out = self.res3(out) + out
         out = self.classifier(out)
         return out
     
