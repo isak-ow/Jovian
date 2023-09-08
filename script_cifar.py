@@ -7,7 +7,7 @@ import wandb
 import torch
 import torch.nn as nn
 
-epochs = 1
+epochs = 24
 wandb.init(
     # set the wandb project where this run will be logged
     project="cluster_CIFAR10_0809",
@@ -74,7 +74,7 @@ def train(epoch):
 
         if grad_clip: 
             nn.utils.clip_grad_value_(model.parameters(), grad_clip)
-            
+
         outputs = model(images)
         loss = criterion(outputs,labels)
         loss.backward()
