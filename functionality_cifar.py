@@ -83,10 +83,10 @@ class cifar_10_model(nn.Module):
             nn.Sequential(conv_block(512, 512), conv_block(512, 512))
         ])
 
-        self.complex_res_blocks = nn.ModuleList([
-            nn.Sequential(ComplexResidualBlock(128, 128), ComplexResidualBlock(128, 128)),
-            nn.Sequential(ComplexResidualBlock(512, 512), ComplexResidualBlock(512, 512))
-        ])
+        # self.complex_res_blocks = nn.ModuleList([
+        #     nn.Sequential(ComplexResidualBlock(128, 128), ComplexResidualBlock(128, 128)),
+        #     nn.Sequential(ComplexResidualBlock(512, 512), ComplexResidualBlock(512, 512))
+        # ])
 
         # self.simple_res_blocks = nn.ModuleList([
         #     nn.Sequential(SimpleResidualBlock(128, 128), SimpleResidualBlock(128, 128)),
