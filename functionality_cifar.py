@@ -62,7 +62,7 @@ def conv_block(in_channels, out_channels, pool=False):
     if pool: layers.append(nn.MaxPool2d(2))
     return nn.Sequential(*layers)
 
-class ResNet9(nn.Module):
+class cifar_10_model(nn.Module):
     def __init__(self, in_channels, num_classes):
         super().__init__()
         

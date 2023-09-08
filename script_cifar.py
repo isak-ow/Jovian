@@ -54,7 +54,8 @@ max_lr = 0.01
 grad_clip = 0.1
 epochs = 24
 
-model = f.to_device(f.ResNet9(color_channels, num_classes), device)
+model = f.to_device(f.cifar_10_model(color_channels, num_classes), device)
+torch.save(model,'model.pth')
 print(model)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(),momentum=0.9, lr=max_lr, weight_decay=5e-4)
@@ -136,6 +137,5 @@ for epoch in range(epochs):
     wandb.log({"learning_rate": f.get_lr(optimizer)})
 
 wandb.finish()
-torch.save(model,'./Jovian/model.pth')
 
 
