@@ -16,7 +16,7 @@ import pre_act_model as pre
 
 wandb.init(project="cluster_CIFAR10_0809", name="better_logging_1")
 wandb.config.update({"architecture": "cifar10model", "dataset": "CIFAR-10", "epochs": 24, 
-                     "batch_size": 400, "weight_decay": 1e-4, "max_lr": 0.01, "grad_clip": 0.1})
+                     "batch_size": 256, "weight_decay": 1e-4, "max_lr": 0.01, "grad_clip": 0.1})
 
 # wandb.init(
 #     # set the wandb project where this run will be logged
