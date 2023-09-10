@@ -32,15 +32,16 @@ class ResidualBlock(nn.Module):
         self.downsample = nn.Sequential()
         if stride != 1 or in_channels != out_channels:
             self.downsample = nn.Sequential(
-                nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride),
+                nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(out_channels)
             )
-            
+
     def forward(self, x):
         residual = x
         out = self.conv1(x)
         out = self.conv2(out)
-        out += self.downsample(residual)
+        residual = self.downsample(residual)
+        out += residual
         out = F.relu(out)
         return out
 
