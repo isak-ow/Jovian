@@ -3,6 +3,7 @@ import tarfile
 from torch.utils.data import DataLoader
 import resnet9 as f
 import resnet18 as g
+import shakes_resnet18 as shakes
 from torchvision.datasets import ImageFolder
 import wandb
 import torch
@@ -11,7 +12,7 @@ import torch.optim.lr_scheduler as lr_scheduler
 
 wandb.init(project="cluster_CIFAR10_0809", name="more_blocks")
 wandb.config.update({"architecture": "cifar10model", "dataset": "CIFAR-10", "epochs": 35, 
-                     "batch_size": 400, "weight_decay": 5e-4, "max_lr": 0.1, "grad_clip": 1.5})
+                     "batch_size": 128, "weight_decay": 5e-4, "max_lr": 0.1, "grad_clip": 1.5})
 
 from torchvision.datasets.utils import download_url
 dataset_url = "https://s3.amazonaws.com/fast-ai-imageclas/cifar10.tgz"
@@ -40,15 +41,15 @@ device = f.get_default_device()
 train_loader = f.DeviceDataLoader(train_dl,device)
 test_loader = f.DeviceDataLoader(test_dl,device)
 
-model = f.to_device(f.cifar_10_model(color_channels, num_classes), device)
+model = f.to_device(shakes.ResNet18(), device)
 print(model)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), momentum=0.9, lr=wandb.config.max_lr, 
                             weight_decay=wandb.config.weight_decay)
-# scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, wandb.config.max_lr, 
-#                                                 epochs=wandb.config.epochs, 
-#                                                 steps_per_epoch=len(train_loader))
-scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[150, 250], gamma=0.1)
+scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, wandb.config.max_lr, 
+                                                epochs=wandb.config.epochs, 
+                                                steps_per_epoch=len(train_loader))
+#scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[150, 250], gamma=0.1)
 best_acc = 0
 
 # Create checkpoint directory if it doesn't exist
@@ -75,7 +76,7 @@ def train(epoch):
             nn.utils.clip_grad_value_(model.parameters(), wandb.config.grad_clip)
         
         optimizer.step()
-        #scheduler.step()
+        scheduler.step()
 
         train_loss += loss.item()
         _, predicted = outputs.max(1)
@@ -124,7 +125,7 @@ def test(epoch):
 for epoch in range(wandb.config.epochs):
     train(epoch)
     test(epoch)
-    scheduler.step()
+    #scheduler.step()
     wandb.log({"epoch": epoch, "learning_rate": f.get_lr(optimizer)})  
 
 wandb.finish()
