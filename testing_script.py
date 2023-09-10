@@ -1,6 +1,7 @@
 ## running inference on the model trained on the cluster
 import torch
 import utils as u
+import os
 from torchvision import transforms
 from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
