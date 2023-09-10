@@ -1,2 +1,7 @@
 data/
 cifar10.tgz
+checkpoint/
+wandb/
+err.txt
+out.txt
+model.pth

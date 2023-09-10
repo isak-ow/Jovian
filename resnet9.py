@@ -3,20 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.transforms as tt
 
-stats = ((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-
-train_tfms = tt.Compose([
-                         tt.ToTensor(), 
-                         tt.Normalize(*stats,inplace=True),
-                         tt.RandomHorizontalFlip(), 
-                         tt.RandomCrop(32, padding=4, padding_mode='reflect')
-]) 
-                         #tt.RandomRotation(30),
-                         #tt.RandomResizedCrop(256, scale=(0.5,0.9), ratio=(1, 1)), 
-                         #tt.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1),
-
-valid_tfms = tt.Compose([tt.ToTensor(), tt.Normalize(*stats)])
-
 class cifar_10_model(nn.Module):
     def __init__(self, in_channels, num_classes):
         super().__init__()
@@ -105,33 +91,6 @@ class ComplexResidualBlock(nn.Module):
         out += residual
         out = self.relu(out)
         return out
-
-class DeviceDataLoader():
-    def __init__(self, dl, device):
-        self.dl = dl
-        self.device = device
-        
-    def __iter__(self):
-        for b in self.dl: 
-            yield to_device(b, self.device)
-
-    def __len__(self):
-        return len(self.dl)
-  
-def get_lr(optimizer):
-    for param_group in optimizer.param_groups:
-        return param_group['lr']
-
-def to_device(data, device):
-    if isinstance(data, (list,tuple)):
-        return [to_device(x, device) for x in data]
-    return data.to(device, non_blocking=True)
-
-def get_default_device():
-    if torch.cuda.is_available():
-        return torch.device('cuda')
-    else:
-        return torch.device('cpu')
 # class cifar_10_model(nn.Module):
 #     def __init__(self, in_channels, num_classes, dropout_rate=0.2):
 #         super().__init__()
