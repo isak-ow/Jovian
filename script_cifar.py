@@ -44,10 +44,10 @@ print(model)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), momentum=0.9, lr=wandb.config.max_lr, 
                             weight_decay=wandb.config.weight_decay)
-scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, wandb.config.max_lr, 
-                                                epochs=wandb.config.epochs, 
-                                                steps_per_epoch=len(train_loader))
-#scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[150, 250], gamma=0.1)
+# scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, wandb.config.max_lr, 
+#                                                 epochs=wandb.config.epochs, 
+#                                                 steps_per_epoch=len(train_loader))
+scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[150, 250], gamma=0.1)
 best_acc = 0
 
 # Create checkpoint directory if it doesn't exist
@@ -74,7 +74,7 @@ def train(epoch):
             nn.utils.clip_grad_value_(model.parameters(), wandb.config.grad_clip)
         
         optimizer.step()
-        scheduler.step()
+        #scheduler.step()
 
         train_loss += loss.item()
         _, predicted = outputs.max(1)
@@ -123,6 +123,7 @@ def test(epoch):
 for epoch in range(wandb.config.epochs):
     train(epoch)
     test(epoch)
+    scheduler.step()
     wandb.log({"epoch": epoch, "learning_rate": f.get_lr(optimizer)})  
 
 wandb.finish()
