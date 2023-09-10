@@ -45,7 +45,7 @@ for i,batch in enumerate(test_loader):
     images, labels = images.to(device), labels.to(device)
     output = model(images)
     acc = accuracy(output,labels)
-    print('Accuracy of model:', acc)
+    print('Accuracy of model:', acc.item())
     break
 
 
