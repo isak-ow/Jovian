@@ -21,9 +21,8 @@ def accuracy(outputs, labels):
     return torch.tensor(torch.sum(preds == labels).item() / len(preds))
 
 model.eval()
-for images, labels in enumerate(test_loader):
-    print(images.shape)
-    images = images.to(device)
+for batch in enumerate(test_loader):
+    images, labels = batch
     output = model(images)
     acc = accuracy(output,labels)
     print('Accuracy of model:', acc)
