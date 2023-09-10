@@ -1,7 +1,8 @@
 import os
 import tarfile
 from torch.utils.data import DataLoader
-import functionality_cifar as f
+import resnet9 as f
+import resnet18 as g
 from torchvision.datasets import ImageFolder
 import wandb
 import torch
@@ -9,7 +10,7 @@ import torch.nn as nn
 import torch.optim.lr_scheduler as lr_scheduler
 
 wandb.init(project="cluster_CIFAR10_0809", name="more_blocks")
-wandb.config.update({"architecture": "cifar10model", "dataset": "CIFAR-10", "epochs": 24, 
+wandb.config.update({"architecture": "cifar10model", "dataset": "CIFAR-10", "epochs": 35, 
                      "batch_size": 400, "weight_decay": 5e-4, "max_lr": 0.1, "grad_clip": 1.5})
 
 from torchvision.datasets.utils import download_url
