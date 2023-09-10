@@ -6,10 +6,11 @@ from torchvision.datasets import ImageFolder
 import wandb
 import torch
 import torch.nn as nn
+import torch.optim.lr_scheduler as lr_scheduler
 
 wandb.init(project="cluster_CIFAR10_0809", name="more_blocks")
 wandb.config.update({"architecture": "cifar10model", "dataset": "CIFAR-10", "epochs": 24, 
-                     "batch_size": 400, "weight_decay": 1e-4, "max_lr": 0.01, "grad_clip": 1.5})
+                     "batch_size": 400, "weight_decay": 5e-4, "max_lr": 0.1, "grad_clip": 1.5})
 
 from torchvision.datasets.utils import download_url
 dataset_url = "https://s3.amazonaws.com/fast-ai-imageclas/cifar10.tgz"
@@ -43,9 +44,10 @@ print(model)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), momentum=0.9, lr=wandb.config.max_lr, 
                             weight_decay=wandb.config.weight_decay)
-scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, wandb.config.max_lr, 
-                                                epochs=wandb.config.epochs, 
-                                                steps_per_epoch=len(train_loader))
+#scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, wandb.config.max_lr, 
+#                                                 epochs=wandb.config.epochs, 
+#                                                 steps_per_epoch=len(train_loader))
+scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[150, 250], gamma=0.1)
 best_acc = 0
 
 # Create checkpoint directory if it doesn't exist
