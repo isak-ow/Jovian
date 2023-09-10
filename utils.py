@@ -75,8 +75,7 @@ def train(model,train_loader,optimizer,criterion,scheduler,device):
     train_accuracy = 100. * correct / total
     wandb.log({"train_loss": avg_train_loss, "train_accuracy": train_accuracy})
 
-def test(epoch,model,test_loader,criterion,device):
-    global best_acc
+def test(epoch,model,test_loader,criterion,device,best_acc):
     model.eval()
     test_loss = 0
     correct = 0
