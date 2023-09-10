@@ -37,6 +37,8 @@ model = torch.load('model.pth')
 
 def accuracy(outputs, labels):
     _, preds = torch.max(outputs, dim=1)
+    print(preds)
+    print(labels)
     return torch.tensor(torch.sum(preds == labels).item() / len(preds))
 
 model.eval()
