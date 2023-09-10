@@ -40,7 +40,7 @@ device = f.get_default_device()
 train_loader = f.DeviceDataLoader(train_dl,device)
 test_loader = f.DeviceDataLoader(test_dl,device)
 
-model = f.to_device(f.ResNet18(color_channels, num_classes), device)
+model = f.to_device(f.cifar_10_model(color_channels, num_classes), device)
 print(model)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), momentum=0.9, lr=wandb.config.max_lr, 
