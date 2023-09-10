@@ -8,7 +8,6 @@ import torch.nn as nn
 
 device = u.get_default_device()
 model = torch.load('model.pth',map_location=device)
-model.eval()
 data_dir = './data/cifar10'
 test_data = ImageFolder(data_dir+'/test', transforms.ToTensor())
 
@@ -20,7 +19,10 @@ def accuracy(outputs, labels):
     _, preds = torch.max(outputs, dim=1)
     return torch.tensor(torch.sum(preds == labels).item() / len(preds))
 
+model.eval()
 for images, labels in enumerate(test_loader):
+    print(images.shape)
+    images = images.to(device)
     output = model(images)
     acc = accuracy(output,labels)
     print('Accuracy of model:', acc)
