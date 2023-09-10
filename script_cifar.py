@@ -65,6 +65,19 @@ for epoch in range(wandb.config.epochs):
 
 wandb.finish()
 torch.save(model, 'model.pth')
+
+model.eval()
+with torch.no_grad():
+  correct = 0
+  total = 0
+  for images, labels in test_loader:
+    images = images.to(device)
+    labels = labels.to(device)
+    output = model(images)
+    _, prediction = torch.max(output.data,1)
+    total += labels.size(0)
+    correct += (prediction == labels).sum().item()
+
+accuracy = correct/total*100
+print(accuracy)
 torch.cuda.empty_cache()
-
-

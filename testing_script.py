@@ -35,20 +35,19 @@ device = u.get_default_device()
 test_loader = u.DeviceDataLoader(test_dl,device)
 model = torch.load('model.pth')
 
-def accuracy(outputs, labels):
-    _, preds = torch.max(outputs, dim=1)
-    print(preds)
-    print(labels)
-    return torch.tensor(torch.sum(preds == labels).item() / len(preds))
-
 model.eval()
-for i,batch in enumerate(test_loader):
-    images, labels = batch
-    images, labels = images.to(device), labels.to(device)
+with torch.no_grad():
+  correct = 0
+  total = 0
+  for images, labels in test_loader:
+    images = images.to(device)
+    labels = labels.to(device)
     output = model(images)
-    acc = accuracy(output,labels)
-    print('Accuracy of model:', acc.item())
-    break
+    _, prediction = torch.max(output.data,1)
+    total += labels.size(0)
+    correct += (prediction == labels).sum().item()
+
+accuracy = correct/total*100
 
 
 del model, images, labels
