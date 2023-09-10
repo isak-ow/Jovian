@@ -26,7 +26,7 @@ color_channels = 3
 
 print(classes)
 
-valid_data = ImageFolder(data_dir+'/test', tt.ToTensor())
+valid_data = ImageFolder(data_dir+'/test', transform=tt.ToTensor())
 
 test_dl = DataLoader(valid_data,1000, num_workers=1)
 
@@ -40,7 +40,7 @@ def accuracy(outputs, labels):
     return torch.tensor(torch.sum(preds == labels).item() / len(preds))
 
 model.eval()
-for batch in enumerate(test_dl):
+for batch in enumerate(test_loader):
     images, labels = batch
     images, labels = images.to(device), labels.to(device)
     output = model(images)
