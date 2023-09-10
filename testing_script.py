@@ -21,7 +21,7 @@ def accuracy(outputs, labels):
 for images, labels in enumerate(test_loader):
     output = model(images)
     acc = accuracy(output,labels)
-    print('Accuracy of model', acc)
+    print('Accuracy of model: ', acc)
     break
 
 
