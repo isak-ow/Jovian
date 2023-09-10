@@ -15,55 +15,113 @@ train_tfms = tt.Compose([tt.RandomCrop(32, padding=4, padding_mode='reflect'),
 
 valid_tfms = tt.Compose([tt.ToTensor(), tt.Normalize(*stats)])
 
-class cifar_10_model(nn.Module):
-    def __init__(self, in_channels, num_classes):
-        super().__init__()
-        
-        self.conv1 = conv_block(in_channels, 64)
-        self.conv2 = conv_block(64, 128, pool=True)
-        self.res1 = nn.Sequential(conv_block(128, 128), conv_block(128, 128))
-        
-        self.conv3 = conv_block(128, 256, pool=True)
-        self.conv4 = conv_block(256, 512, pool=True)
-        self.res2 = nn.Sequential(conv_block(512, 512), conv_block(512, 512))
-        
-        # self.conv5 = conv_block(512, 512, pool=True)
-        # self.conv6 = conv_block(512, 512, pool=True)
-        # self.res3 = nn.Sequential(conv_block(512, 512), conv_block(512, 512))
-
-        self.classifier = nn.Sequential(nn.MaxPool2d(4), 
-                                        nn.Flatten(), 
-                                        nn.Dropout(0.2),
-                                        nn.Linear(512, num_classes))
-        
-    def forward(self, xb):
-        #input [batch,3,32,32]
-        out = self.conv1(xb)
-        #out [batch,64,32,32]
-        out = self.conv2(out)
-        #out [batch,128,16,16]
-        out = self.res1(out) + out
-        #out [batch,128,16,16]
-        out = self.conv3(out)
-        #out [batch,256,16,16]
-        out = self.conv4(out)
-        #out [batch,512,4,4]
-        out = self.res2(out) + out
-        #out [batch,512,4,4]
-        # out = self.conv5(out)
-        # out = self.conv6(out)
-        # out = self.res3(out) + out
-        print(out.shape)
-        out = self.classifier(out)
-        print(out.shape)
-        return out
 
 def conv_block(in_channels, out_channels, pool=False):
-    layers = [nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1), 
-              nn.BatchNorm2d(out_channels), 
+    layers = [nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
+              nn.BatchNorm2d(out_channels),
               nn.ReLU(inplace=True)]
-    if pool: layers.append(nn.MaxPool2d(2))
+    if pool:
+        layers.append(nn.MaxPool2d(2))
     return nn.Sequential(*layers)
+
+class ResidualBlock(nn.Module):
+    def __init__(self, in_channels, out_channels, stride=1):
+        super().__init__()
+        self.conv1 = conv_block(in_channels, out_channels, pool=False)
+        self.conv2 = conv_block(out_channels, out_channels, pool=False)
+        self.downsample = nn.Sequential()
+        if stride != 1 or in_channels != out_channels:
+            self.downsample = nn.Sequential(
+                nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride),
+                nn.BatchNorm2d(out_channels)
+            )
+            
+    def forward(self, x):
+        residual = x
+        out = self.conv1(x)
+        out = self.conv2(out)
+        out += self.downsample(residual)
+        out = F.relu(out)
+        return out
+
+class ResNet18(nn.Module):
+    def __init__(self, in_channels, num_classes):
+        super().__init__()
+        self.conv1 = conv_block(in_channels, 64)
+        self.layer1 = self._make_layer(64, 64, 2)
+        self.layer2 = self._make_layer(64, 128, 2, stride=2)
+        self.layer3 = self._make_layer(128, 256, 2, stride=2)
+        self.layer4 = self._make_layer(256, 512, 2, stride=2)
+        self.fc = nn.Linear(512, num_classes)
+        
+    def _make_layer(self, in_channels, out_channels, num_blocks, stride=1):
+        strides = [stride] + [1] * (num_blocks - 1)
+        layers = []
+        for stride in strides:
+            layers.append(ResidualBlock(in_channels, out_channels, stride))
+            in_channels = out_channels
+        return nn.Sequential(*layers)
+    
+    def forward(self, x):
+        out = self.conv1(x)
+        out = self.layer1(out)
+        out = self.layer2(out)
+        out = self.layer3(out)
+        out = self.layer4(out)
+        out = F.avg_pool2d(out, 4)
+        out = out.view(out.size(0), -1)
+        out = self.fc(out)
+        return out
+
+# class cifar_10_model(nn.Module):
+#     def __init__(self, in_channels, num_classes):
+#         super().__init__()
+        
+#         self.conv1 = conv_block(in_channels, 64)
+#         self.conv2 = conv_block(64, 128, pool=True)
+#         self.res1 = nn.Sequential(conv_block(128, 128), conv_block(128, 128))
+        
+#         self.conv3 = conv_block(128, 256, pool=True)
+#         self.conv4 = conv_block(256, 512, pool=True)
+#         self.res2 = nn.Sequential(conv_block(512, 512), conv_block(512, 512))
+        
+#         # self.conv5 = conv_block(512, 512, pool=True)
+#         # self.conv6 = conv_block(512, 512, pool=True)
+#         # self.res3 = nn.Sequential(conv_block(512, 512), conv_block(512, 512))
+
+#         self.classifier = nn.Sequential(nn.MaxPool2d(4), 
+#                                         nn.Flatten(), 
+#                                         nn.Dropout(0.2),
+#                                         nn.Linear(512, num_classes))
+        
+#     def forward(self, xb):
+#         #input [batch,3,32,32]
+#         out = self.conv1(xb)
+#         #out [batch,64,32,32]
+#         out = self.conv2(out)
+#         #out [batch,128,16,16]
+#         out = self.res1(out) + out
+#         #out [batch,128,16,16]
+#         out = self.conv3(out)
+#         #out [batch,256,16,16]
+#         out = self.conv4(out)
+#         #out [batch,512,4,4]
+#         out = self.res2(out) + out
+#         #out [batch,512,4,4]
+#         # out = self.conv5(out)
+#         # out = self.conv6(out)
+#         # out = self.res3(out) + out
+#         print(out.shape)
+#         out = self.classifier(out)
+#         print(out.shape)
+#         return out
+
+# def conv_block(in_channels, out_channels, pool=False):
+#     layers = [nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1), 
+#               nn.BatchNorm2d(out_channels), 
+#               nn.ReLU(inplace=True)]
+#     if pool: layers.append(nn.MaxPool2d(2))
+#     return nn.Sequential(*layers)
 
 # class cifar_10_model(nn.Module):
 #     def __init__(self, in_channels, num_classes, dropout_rate=0.2):
