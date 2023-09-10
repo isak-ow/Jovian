@@ -10,6 +10,7 @@ device = u.get_default_device()
 model = torch.load('model.pth',map_location=device)
 data_dir = './data/cifar10'
 test_data = ImageFolder(data_dir+'/test', transforms.ToTensor())
+print(test_data.shape)
 
 #loading test_set onto GPU
 test_dl = DataLoader(test_data, 1000, num_workers=1, pin_memory=True)
