@@ -1,6 +1,7 @@
 ## running inference on the model trained on the cluster
 import torch
 import utils as u
+from torchvision import transforms
 from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
 import torch.nn as nn
@@ -9,7 +10,7 @@ device = u.get_default_device()
 model = torch.load('model.pth',map_location=device)
 model.eval()
 data_dir = './data/cifar10'
-test_data = ImageFolder(data_dir+'/test', u.valid_tfms)
+test_data = ImageFolder(data_dir+'/test', transforms.ToTensor())
 
 #loading test_set onto GPU
 test_dl = DataLoader(test_data, 1000, num_workers=1, pin_memory=True)
