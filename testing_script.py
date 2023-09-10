@@ -23,6 +23,7 @@ def accuracy(outputs, labels):
 model.eval()
 for batch in enumerate(test_loader):
     images, labels = batch
+    images, labels = images.to(device), labels.to(device)
     output = model(images)
     acc = accuracy(output,labels)
     print('Accuracy of model:', acc)
