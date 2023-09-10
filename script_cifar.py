@@ -61,7 +61,7 @@ if not os.path.isdir('checkpoint'):
 for epoch in range(wandb.config.epochs):
     u.train(model,train_loader,optimizer,criterion,scheduler,device)
     u.test(epoch,model,test_loader,criterion,device,best_acc)
-    wandb.log({"epoch": epoch, "learning_rate": f.get_lr(optimizer)})  
+    wandb.log({"epoch": epoch, "learning_rate": u.get_lr(optimizer)})  
 
 wandb.finish()
 torch.save(model, 'model.pth')
