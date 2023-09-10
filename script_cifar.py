@@ -48,8 +48,6 @@ scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, wandb.config.max_lr,
                                                 steps_per_epoch=len(train_loader))
 best_acc = 0
 
-import os
-
 # Create checkpoint directory if it doesn't exist
 if not os.path.isdir('checkpoint'):
     os.mkdir('checkpoint')
