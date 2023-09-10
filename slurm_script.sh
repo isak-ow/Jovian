@@ -7,9 +7,9 @@
 #SBATCH --mail-user=i.wangensteen@uq.net.au
 #SBATCH -o out.txt
 #SBATCH -e err.txt
-#SBATCH --partition=test
+#SBATCH --partition=vgpu
 #SBATCH --gres=gpu:1
 
 conda activate cluster_env
 
-python3 ~/Jovian1/testing_script.py
+python3 ~/Jovian1/script_cifar.py
