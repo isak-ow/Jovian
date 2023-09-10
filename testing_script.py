@@ -7,6 +7,7 @@ import torch.nn as nn
 
 device = u.get_default_device()
 model = torch.load('model.pth',map_location=device)
+model.eval()
 data_dir = './data/cifar10'
 test_data = ImageFolder(data_dir+'/test', u.valid_tfms)
 
@@ -21,7 +22,7 @@ def accuracy(outputs, labels):
 for images, labels in enumerate(test_loader):
     output = model(images)
     acc = accuracy(output,labels)
-    print('Accuracy of model: ', acc)
+    print('Accuracy of model:', acc)
     break
 
 
