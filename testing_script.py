@@ -24,6 +24,7 @@ classes = os.listdir(data_dir + "/train")
 num_classes = len(classes)
 color_channels = 3
 
+model_dir = './checkpoint/ckpt.pth'
 print(classes)
 
 valid_data = ImageFolder(data_dir+'/test', transform=tt.ToTensor())
@@ -33,7 +34,8 @@ test_dl = DataLoader(valid_data,1000, num_workers=1)
 device = u.get_default_device()
 
 test_loader = u.DeviceDataLoader(test_dl,device)
-model = torch.load('model.pth')
+model = shakes.ResNet18()
+model.load_state_dict(torch.load('./checkpoint/ckpt.pth'))
 
 model.eval()
 with torch.no_grad():
@@ -48,7 +50,7 @@ with torch.no_grad():
     correct += (prediction == labels).sum().item()
 
 accuracy = correct/total*100
-
+print('Accuracy: ', accuracy)
 
 del model, images, labels
 torch.cuda.empty_cache()
