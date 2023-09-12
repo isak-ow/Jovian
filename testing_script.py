@@ -36,6 +36,7 @@ device = u.get_default_device()
 test_loader = u.DeviceDataLoader(test_dl,device)
 model = shakes.ResNet18()
 model.load_state_dict(torch.load('./checkpoint/ckpt.pth'),device)
+model.to(device)
 
 model.eval()
 with torch.no_grad():
