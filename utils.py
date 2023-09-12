@@ -97,12 +97,7 @@ def test(epoch,model,test_loader,criterion,device,best_acc):
         
         if acc > best_acc:
             print('Saving best model...')
-            state = {
-                'net': model.state_dict(),
-                'acc': acc,
-                'epoch': epoch,
-            }
-            torch.save(state, './checkpoint/ckpt.pth')
+            torch.save(model.state_dict(), './checkpoint/ckpt.pth')
             best_acc = acc
         
     avg_test_loss = test_loss / len(test_loader)
