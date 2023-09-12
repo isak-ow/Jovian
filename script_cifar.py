@@ -79,5 +79,6 @@ with torch.no_grad():
     correct += (prediction == labels).sum().item()
 
 accuracy = correct/total*100
+torch.save(model.state_dict(), './checkpoint/ckpt.pth')
 print(accuracy)
 torch.cuda.empty_cache()
