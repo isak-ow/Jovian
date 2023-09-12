@@ -12,4 +12,4 @@
 
 conda activate cluster_env
 
-python3 ~/Jovian1/script_cifar.py
+python3 ~/Jovian1/testing_script.py
